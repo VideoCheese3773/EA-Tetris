@@ -1,35 +1,42 @@
+/*
+TODO:
+- Cambiar RGB de tetrminios
+- Agregar puntaje por fila y el contador
+- implementar hold de tetrimino
+*/
+
 let keyPressUp = false;
 let keyPressDown = false;
 let keyPressLeft = false;
 let keyPressRight = false;
 
 var shapeList = [
-  [ 0, 0, 1, 0,
+  [0, 0, 1, 0,
     0, 0, 1, 0,
     0, 0, 1, 0,
     0, 0, 1, 0], // I
 
-  [ 0, 2, 0,
+  [0, 2, 0,
     0, 2, 0,
     0, 2, 2], // L
 
-  [ 0, 3, 0,
+  [0, 3, 0,
     0, 3, 0,
     3, 3, 0], // J
 
-  [ 4, 4, 0,
+  [4, 4, 0,
     0, 4, 4,
     0, 0, 0], // Z
 
-  [ 0, 5, 5,
+  [0, 5, 5,
     5, 5, 0,
     0, 0, 0], // S
 
-  [ 0, 0, 0,
+  [0, 0, 0,
     6, 6, 6,
     0, 6, 0], // T
 
-  [ 7, 7,
+  [7, 7,
     7, 7], // O
 ];// tetriminos shapes
 
@@ -37,26 +44,27 @@ var palletteMono = [];
 
 var pallette = [
   [255, 255, 255], // 0, void
-  [255, 224, 0], // 1 Yellow
-  [255, 32, 0], // 2 Red
-  [32, 255, 0], // 3 Green
-  [16, 128, 255], // 4 Blue
-  [255, 96, 16], // 5 Orange
-  [0, 196, 255], // 6 Light Blue
-  [128, 0, 255], // 7 Purple
+  [255, 201, 66], // 1 Yellow
+  [255, 66, 66], // 2 Red
+  [79, 235, 148], // 3 Green
+  [39, 82, 255], // 4 Blue
+  [255, 161, 66], // 5 Orange
+  [39, 189, 255], // 6 Light Blue
+  [196, 61, 255], // 7 Purple
 ]; // color pallette
 
 // Fonts
-let kanitReg, tetrisImg;
+let kanitReg, kanigSB, tetrisImg;
 
 function preload() {
   kanitReg = loadFont('/assets/fonts/kanit/Kanit-Regular.ttf');
+  kanitSB = loadFont('/assets/fonts/kanit/Kanit-SemiBold.ttf')
   tetrisImg = loadImage('/assets/imgs/tetris.png')
 }
 
 // Game
-function setup() {
-  createCanvas(1080,1920);
+function setup() { //setup de canvas y demas
+  createCanvas(1080, 1920);
   this.tetris = new Tetris(10, 20);
   this.timer = new Timer();
   frameRate(60);
@@ -71,7 +79,7 @@ function setup() {
   }
 }
 
-function draw() {
+function draw() { //dibuja y actualiza el tetris cada tick
   if (this.timer.updateStep()) {
     applyInput(25);
   }
@@ -79,7 +87,7 @@ function draw() {
   this.tetris.display(this);
 }
 
-function applyInput(newDelay) {
+function applyInput(newDelay) { // recibe las entreadas del usuario para mover los tetriminos
   if (this.tetris.pause) return;
   if (keyPressUp) this.tetris.rotate = true;
   if (keyPressDown) this.tetris.ty = +1;
@@ -88,7 +96,7 @@ function applyInput(newDelay) {
   this.timer.reset(newDelay);
 }
 
-function keyPressed() {
+function keyPressed() { // funcion para config de controles y listeners
   if (keyCode == 70) this.tetris.pause = !this.tetris.pause;
   if (keyCode == 82) this.tetris.restart = true;
   keyPressUp |= keyCode === 87;
@@ -97,7 +105,7 @@ function keyPressed() {
   keyPressRight |= keyCode === 68;
   applyInput(200);
 }
-function keyReleased() {
+function keyReleased() { // lo mismo pero cuando los sueltan
   keyPressUp ^= keyCode === 87;
   keyPressDown ^= keyCode === 83;
   keyPressLeft ^= keyCode === 65;
@@ -105,14 +113,15 @@ function keyReleased() {
 }
 
 class Tetris {
-  constructor(nx, ny) {
-    this.tGrid = new TGrid(nx, ny);
-    this.timer = new Timer();
+  constructor(nx, ny) { //el constructor base del Tetris
+    this.tGrid = new TGrid(nx, ny); // tamaño del tetris
+    this.timer = new Timer(); // timer del tetris
     this.restartGame();
     this.shapeNext = undefined;
+    this.shapeHold = undefined;
     this.pickNextShape();
   }
-  restartGame() {
+  restartGame() { // default values para el tetris
     this.tGrid.clearGrid();
     this.restart = false;
     this.pause = false;
@@ -186,7 +195,7 @@ class Tetris {
     cell = ceil(Math.min(w / this.tGrid.nx, h / this.tGrid.ny));
     w = this.tGrid.nx * cell;
     h = this.tGrid.ny * cell;
-    x = parseInt((canvasW/12));
+    x = parseInt((canvasW / 12));
     y = parseInt((canvasH - h) / 2.0);
     canvas.background(0, 0, 50); //done
     canvas.strokeWeight(3); //width of tetris cells
@@ -201,74 +210,94 @@ class Tetris {
 
     // Shape preview
     {
-      var _w = 2*canvasW/6;
-      var _h = 1*canvasH/6;
-      var _y = 6*canvasH/20;
-      var _x = 5*canvasW/6;
+      var _w = 2 * canvasW / 6;
+      var _h = 1 * canvasH / 6;
+      var _y = 6 * canvasH / 20;
+      var _x = 5 * canvasW / 6;
       this.displayNextShape(canvas, _x, _y, _w, _h);
     }
 
     // Header
     {
-      var ty = canvasH/16+50;
-      var tx = canvasW/2;
+      var ty = canvasH / 16 + 50;
+      var tx = canvasW / 2;
       var txtTitle = "NIKE X TETRIS";
       canvas.textAlign(CENTER, CENTER);
       canvas.noStroke();
-      canvas.textFont(kanitReg);
+      canvas.textFont(kanitSB);
       canvas.textSize(110);
       canvas.fill(240); //done
-      canvas.text(txtTitle, tx, ty);
+      canvas.text(txtTitle, tx, ty - 70);
       var txtDesc = "Get to level 6 for a discount!"
       canvas.textAlign(CENTER, CENTER);
       canvas.noStroke();
+      canvas.textFont(kanitReg);
       canvas.textSize(50);
       canvas.fill(160); //done
-      canvas.text(txtDesc, tx, ty+70);
+      canvas.text(txtDesc, tx, ty + 30);
       image(tetrisImg, 1, 1765)
 
     }
 
     // Game level, ...
     {
-      var ty = (4*canvasH/20)-55;
-      var tx1 = 5*canvasW/6;
+      var ty = (4 * canvasH / 20) - 55;
+      var tx1 = 5 * canvasW / 6;
       var txtLevel = "LEVEL " + this.level;
       var txtProgress = "ROW " + this.rowsCompleted + "/" + this.rowsPerLevel;
       var txtShapes = "SHAPE " + this.shapesCount;
+
       canvas.textAlign(CENTER, CENTER);
       canvas.noStroke();
       canvas.fill(240); //done
       canvas.textSize(44);
+      canvas.textFont(kanitReg);
       canvas.text(txtLevel, tx1, ty);
+
       canvas.fill(160); //done
       canvas.textSize(32);
+      canvas.textFont(kanitReg);
       canvas.text(txtProgress, tx1, (ty * 1.12));
       canvas.text(txtShapes, tx1, (ty * 1.22));
     }
 
     // Game status
+    var lvlWin = 1; // ESTO CAMBIA EL NUMERO DE NIVELES PARA GANAR EL DESCUENTO
     var txtGameStatus = undefined;
-    if (this.gameOver) txtGameStatus = "GAME OVER";
+    if (this.gameOver) {
+      if (this.level > lvlWin) {
+        txtGameStatus = "YOU WIN"
+      } else {
+        txtGameStatus = "GAME OVER";
+      }
+    }
     if (this.pause) txtGameStatus = "PAUSE";
     if (txtGameStatus !== undefined) {
       canvas.textSize(144);
+      canvas.textFont(kanitSB);
       canvas.textAlign(CENTER, CENTER);
       canvas.noStroke();
       canvas.fill(0, 0, 0); //done
       canvas.text(txtGameStatus, canvasW / 2 + 4, canvasH / 2 + 4);
-      canvas.fill(255, 0, 0); //done
+      if (this.pause) {
+        canvas.fill(255, 255, 0); //Yellow
+      } else if (this.level > lvlWin) {
+        canvas.fill(0, 255, 0); //Green
+      } else {
+        canvas.fill(255, 0, 0); //Red
+      }
       canvas.text(txtGameStatus, canvasW / 2, canvasH / 2);
     }
 
     // Controlls
     {
-      var ty = 8*canvasW/6;
-      var tx1 = (6*canvasW/8)-40;
+      var ty = 8 * canvasW / 6;
+      var tx1 = (6 * canvasW / 8) - 40;
       var tx2 = tx1 + 40;
       canvas.textAlign(LEFT);
       canvas.noStroke();
       canvas.textSize(32);
+      canvas.textFont(kanitReg);
       canvas.fill(160); //done
       canvas.text("W", tx1, ty);
       canvas.text("- ROTATE", tx2, ty);
@@ -344,7 +373,7 @@ class Tetris {
       }
     }
   }
-
+//TODO:How do i save and display a holded tetrimino
   displayNextShape(pg, x, y, w, h) {
     var shape = this.shapeNext;
     var shapeSize = parseInt(sqrt(shape.length));
@@ -373,7 +402,7 @@ class Tetris {
   }
 }
 
-class Timer {
+class Timer { // el timer del tetris
   constructor() {
     this.duration = 600;
     this.time = 0;
