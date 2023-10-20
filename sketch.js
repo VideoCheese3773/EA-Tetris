@@ -3,6 +3,7 @@ TODO:
 - Agregar puntaje por fila y el contador
 - implementar hold de tetrimino
 - agregar la pausa a Kalinka cuando se pausa el juego
+- poner sonido de portal blue al cambio de hold
 */
 
 let keyPressUp = false;
@@ -54,7 +55,7 @@ var pallette = [
 ]; // color pallette
 
 // Fonts
-let kanitReg, kanigSB, tetrisImg, kalinka, holdOnTight;
+let kanitReg, kanigSB, tetrisImg, kalinka, holdOnTight, bite;
 
 function preload() {
   //Fonts
@@ -65,6 +66,9 @@ function preload() {
   //Music
   kalinka = loadSound('/assets/audio/Kalinka.mp3');
   holdOnTight = loadSound('/assets/audio/Hold On Tight.mp3');
+  //SFX
+  bite = loadSound('/assets/audio/Bite.mp3');
+  bite.setVolume(0.2)
 }
 
 // Game
@@ -527,6 +531,7 @@ class TGrid { //REVISAR
       }
       if (rowCompleted) {
         this.grid.copyWithin(this.nx, 0, gy * this.nx);
+        bite.play(); //SFX cuando limpe linea
         rows++;
       }
     }
