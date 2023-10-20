@@ -54,7 +54,7 @@ var pallette = [
 ]; // color pallette
 
 // Fonts
-let kanitReg, kanigSB, tetrisImg, kalinka;
+let kanitReg, kanigSB, tetrisImg, kalinka, holdOnTight;
 
 function preload() {
   //Fonts
@@ -64,6 +64,7 @@ function preload() {
   tetrisImg = loadImage('/assets/imgs/tetris.png');
   //Music
   kalinka = loadSound('/assets/audio/Kalinka.mp3');
+  holdOnTight = loadSound('/assets/audio/Hold On Tight.mp3');
 }
 
 // Game
@@ -90,7 +91,7 @@ function draw() { //dibuja y actualiza el tetris cada tick
   }
   this.tetris.update();
   this.tetris.display(this);
-  kalinka.setVolume(volSlider.value());
+  holdOnTight.setVolume(volSlider.value());
 }
 
 function applyInput(newDelay) { // recibe las entreadas del usuario para mover los tetriminos
@@ -126,8 +127,8 @@ class Tetris {
     this.shapeNext = undefined;
     this.shapeHold = undefined;
     this.pickNextShape();
-    kalinka.play();
-    kalinka.loop();
+    holdOnTight.play();
+    holdOnTight.loop();
   }
   restartGame() { // default values para el tetris
     this.tGrid.clearGrid();
@@ -143,8 +144,8 @@ class Tetris {
     this.rowsCompleted = 0;
     this.shapesCount = 0;
     this.timer.reset(600);
-    kalinka.stop();// esto reinicia Kalinka cada vez que se reinicia el juego
-    kalinka.play();
+    holdOnTight.stop();// esto reinicia holdOnTight cada vez que se reinicia el juego
+    holdOnTight.play();
   }
   pickNextShape() {
     this.shapeCurr = this.shapeNext;
@@ -436,7 +437,7 @@ class Timer { // el timer del tetris
   }
 }
 
-class TGrid {
+class TGrid { //REVISAR
   constructor(nx, ny) {
     this.nx = nx;
     this.ny = ny;
