@@ -1,8 +1,8 @@
 /*
 TODO:
-- Cambiar RGB de tetrminios
 - Agregar puntaje por fila y el contador
 - implementar hold de tetrimino
+- agregar la pausa a Kalinka cuando se pausa el juego
 */
 
 let keyPressUp = false;
@@ -54,16 +54,21 @@ var pallette = [
 ]; // color pallette
 
 // Fonts
-let kanitReg, kanigSB, tetrisImg;
+let kanitReg, kanigSB, tetrisImg, kalinka;
 
 function preload() {
+  //Fonts
   kanitReg = loadFont('/assets/fonts/kanit/Kanit-Regular.ttf');
-  kanitSB = loadFont('/assets/fonts/kanit/Kanit-SemiBold.ttf')
-  tetrisImg = loadImage('/assets/imgs/tetris.png')
+  kanitSB = loadFont('/assets/fonts/kanit/Kanit-SemiBold.ttf');
+  //Img
+  tetrisImg = loadImage('/assets/imgs/tetris.png');
+  //Music
+  kalinka = loadSound('/assets/audio/Kalinka.mp3');
 }
 
 // Game
 function setup() { //setup de canvas y demas
+  volSlider = createSlider(0, 1, 0.05, 0.05);//Slider para el volumen
   createCanvas(1080, 1920);
   this.tetris = new Tetris(10, 20);
   this.timer = new Timer();
@@ -85,6 +90,7 @@ function draw() { //dibuja y actualiza el tetris cada tick
   }
   this.tetris.update();
   this.tetris.display(this);
+  kalinka.setVolume(volSlider.value());
 }
 
 function applyInput(newDelay) { // recibe las entreadas del usuario para mover los tetriminos
@@ -120,6 +126,8 @@ class Tetris {
     this.shapeNext = undefined;
     this.shapeHold = undefined;
     this.pickNextShape();
+    kalinka.play();
+    kalinka.loop();
   }
   restartGame() { // default values para el tetris
     this.tGrid.clearGrid();
@@ -135,6 +143,8 @@ class Tetris {
     this.rowsCompleted = 0;
     this.shapesCount = 0;
     this.timer.reset(600);
+    kalinka.stop();// esto reinicia Kalinka cada vez que se reinicia el juego
+    kalinka.play();
   }
   pickNextShape() {
     this.shapeCurr = this.shapeNext;
