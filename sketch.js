@@ -1,10 +1,12 @@
 /*
 TODO:
 - Agregar puntaje por fila y el contador
-- implementar hold de tetrimino
+- implementar hold de tetrimino - usar formato de tetris.pause
 - agregar la pausa a Kalinka cuando se pausa el juego
 - poner sonido de portal blue al cambio de hold
 */
+
+import { getArduino } from "./index.js"; 
 
 let keyPressUp = false;
 let keyPressDown = false;
@@ -114,6 +116,7 @@ function keyPressed() { // funcion para config de controles y listeners
   keyPressDown |= keyCode === 83;
   keyPressLeft |= keyCode === 65;
   keyPressRight |= keyCode === 68;
+  arduinoKeyPressed(getArduino);
   applyInput(200);
 }
 function keyReleased() { // lo mismo pero cuando los sueltan
@@ -121,6 +124,11 @@ function keyReleased() { // lo mismo pero cuando los sueltan
   keyPressDown ^= keyCode === 83;
   keyPressLeft ^= keyCode === 65;
   keyPressRight ^= keyCode === 68;
+}
+
+function arduinoKeyPressed(getArduino){
+  keyPressUp |= getArduino === 87; //W
+  applyInput(200);
 }
 
 class Tetris {

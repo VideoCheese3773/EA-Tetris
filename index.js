@@ -14,14 +14,11 @@ SerialPort.list().then (
 const port = new SerialPort(protocolConfiguration);
 const parser = port.pipe(new ReadlineParser());
 
-parser.on('data', (data) => {    
-   console.log(data);
+function getArduino(){
+   parser.on('data', (data) => {    
+      console.log(data);
+      return data;
+   });
+}
 
-   /*if( parseInt(data) % 5 == 0){
-      parser.write("encender\n");
-   } else {
-      parser.write("apagar\n");
-   }*/
-
-   //parser.write("Orale\n");
-});
+export {getArduino};
