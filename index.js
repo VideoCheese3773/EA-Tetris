@@ -1,8 +1,6 @@
 import { SerialPort } from 'serialport'
 import { ReadlineParser } from 'serialport'
 
-//const SerialPort = require(serialport)
-
 const protocolConfiguration = {
    path: 'COM3',
    baudRate: 9600
