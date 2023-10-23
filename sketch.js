@@ -10,6 +10,7 @@ let keyPressUp = false;
 let keyPressDown = false;
 let keyPressLeft = false;
 let keyPressRight = false;
+let musicPlay = true;
 
 var shapeList = [
   [ 0, 0, 1, 0,
@@ -73,7 +74,7 @@ function preload() {
 
 // Game
 function setup() { //setup de canvas y demas
-  volSlider = createSlider(0, 1, 0.05, 0.05);//Slider para el volumen
+  volSlider = createSlider(0, 1, 0.15, 0.05);//Slider para el volumen
   createCanvas(1080, 1920);
   this.tetris = new Tetris(10, 20);
   this.timer = new Timer();
@@ -108,7 +109,16 @@ function applyInput(newDelay) { // recibe las entreadas del usuario para mover l
 }
 
 function keyPressed() { // funcion para config de controles y listeners
-  if (keyCode == 70) this.tetris.pause = !this.tetris.pause;//F
+  if (keyCode == 70) {
+    this.tetris.pause = !this.tetris.pause;//F
+    if (musicPlay == true) {
+      holdOnTight.pause();
+      musicPlay = false;
+    } else {
+      holdOnTight.loop()
+      musicPlay = true;
+    }
+  }
   if (keyCode == 82) this.tetris.restart = true;//R
   keyPressUp |= keyCode === 87;//W
   keyPressDown |= keyCode === 83;//S
@@ -137,8 +147,8 @@ class Tetris {
     this.shapeNext = undefined;
     this.shapeHold = undefined;
     this.pickNextShape();
-    holdOnTight.play();
-    holdOnTight.loop();
+    //holdOnTight.play();
+    //holdOnTight.loop();
   }
   restartGame() { // default values para el tetris
     this.tGrid.clearGrid();
@@ -457,7 +467,7 @@ class TGrid { //REVISAR
     this.clearGrid();
     this.setShape([0]);
   }
-  
+
   clearGrid() {
     for (var i = 0; i < this.grid.length; i++) {
       this.grid[i] = 0;
