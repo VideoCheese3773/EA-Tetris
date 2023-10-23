@@ -6,40 +6,38 @@ TODO:
 - poner sonido de portal blue al cambio de hold
 */
 
-import { getArduino } from "./index.js"; 
-
 let keyPressUp = false;
 let keyPressDown = false;
 let keyPressLeft = false;
 let keyPressRight = false;
 
 var shapeList = [
-  [0, 0, 1, 0,
+  [ 0, 0, 1, 0,
     0, 0, 1, 0,
     0, 0, 1, 0,
     0, 0, 1, 0], // I
 
-  [0, 2, 0,
+  [ 0, 2, 0,
     0, 2, 0,
     0, 2, 2], // L
 
-  [0, 3, 0,
+  [ 0, 3, 0,
     0, 3, 0,
     3, 3, 0], // J
 
-  [4, 4, 0,
+  [ 4, 4, 0,
     0, 4, 4,
     0, 0, 0], // Z
 
-  [0, 5, 5,
+  [ 0, 5, 5,
     5, 5, 0,
     0, 0, 0], // S
 
-  [0, 0, 0,
+  [ 0, 0, 0,
     6, 6, 6,
     0, 6, 0], // T
 
-  [7, 7,
+  [ 7, 7,
     7, 7], // O
 ];// tetriminos shapes
 
@@ -110,13 +108,13 @@ function applyInput(newDelay) { // recibe las entreadas del usuario para mover l
 }
 
 function keyPressed() { // funcion para config de controles y listeners
-  if (keyCode == 70) this.tetris.pause = !this.tetris.pause;
-  if (keyCode == 82) this.tetris.restart = true;
-  keyPressUp |= keyCode === 87;
-  keyPressDown |= keyCode === 83;
-  keyPressLeft |= keyCode === 65;
-  keyPressRight |= keyCode === 68;
-  arduinoKeyPressed(getArduino);
+  if (keyCode == 70) this.tetris.pause = !this.tetris.pause;//F
+  if (keyCode == 82) this.tetris.restart = true;//R
+  keyPressUp |= keyCode === 87;//W
+  keyPressDown |= keyCode === 83;//S
+  keyPressLeft |= keyCode === 65;//A
+  keyPressRight |= keyCode === 68;//D
+  //arduinoKeyPressed(getArduino);
   applyInput(200);
 }
 function keyReleased() { // lo mismo pero cuando los sueltan
@@ -249,7 +247,7 @@ class Tetris {
       canvas.noStroke();
       canvas.textFont(kanitSB);
       canvas.textSize(110);
-      canvas.fill(240); //done
+      canvas.fill(240, 240, 240); //done
       canvas.text(txtTitle, tx, ty - 70);
       var txtDesc = "Get to level 6 for a discount!"
       canvas.textAlign(CENTER, CENTER);
@@ -342,12 +340,13 @@ class Tetris {
       ty = ty * 1.02;
     }
   }
+
   displayGrid(pg, x, y, w, h, pallette) {
     var nx = this.tGrid.nx;
     var ny = this.tGrid.ny;
     var cw = w / nx;
     var ch = h / ny;
-    // BG
+    // BackGround
     for (var gy = 0; gy < ny; gy++) {
       for (var gx = 0; gx < nx; gx++) {
         var cx = x + gx * cw;
@@ -362,7 +361,7 @@ class Tetris {
       }
     }
 
-    // FG
+    // ForeGround
     for (var gy = 0; gy < ny; gy++) {
       for (var gx = 0; gx < nx; gx++) {
         var cx = x + gx * cw;
@@ -458,20 +457,24 @@ class TGrid { //REVISAR
     this.clearGrid();
     this.setShape([0]);
   }
+  
   clearGrid() {
     for (var i = 0; i < this.grid.length; i++) {
       this.grid[i] = 0;
     }
   }
+
   isInsideGrid(x, y) {
     return x >= 0 && x < this.nx && y >= 0 && y < this.ny;
   }
+
   setShape(shape) {
     this.shape = shape;
     this.shapeSize = parseInt(sqrt(shape.length));
     this.sx = ceil(this.nx / 2);
     this.sy = ceil(this.shapeSize / 2);
   }
+
   getGridVal(x, y) {
     if (!this.isInsideGrid(x, y)) {
       return -1;
@@ -479,12 +482,15 @@ class TGrid { //REVISAR
       return this.grid[y * this.nx + x];
     }
   }
+
   setGridVal(x, y, val) {
     this.grid[y * this.nx + x] = val;
   }
+
   getShapeVal(x, y) {
     return this.shape[y * this.shapeSize + x];
   }
+
   rotateShapeDir(CW) {
     var size = this.shapeSize;
     var cpy = this.shape.slice(0);
@@ -506,6 +512,7 @@ class TGrid { //REVISAR
       }
     }
   }
+
   rotateShape() {
     this.rotateShapeDir(true);
     if (this.collision(0, 0)) {
@@ -529,6 +536,7 @@ class TGrid { //REVISAR
     }
     return false;
   }
+
   updateRows() {
     var rows = 0;
     for (var gy = 0; gy < this.ny; gy++) {
@@ -550,6 +558,7 @@ class TGrid { //REVISAR
     }
     return rows;
   }
+
   splatShape() {
     let ks = this.shapeSize;
     let kr = ceil(this.shapeSize / 2);

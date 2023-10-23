@@ -1,5 +1,5 @@
-import { SerialPort } from 'serialport'
-import { ReadlineParser } from 'serialport'
+import { SerialPort } from './node_modules/serialport/dist/index.js'
+import { ReadlineParser } from './node_modules/@serialport/parser-readline/dist/index.js'
 
 const protocolConfiguration = {
    path: 'COM3',
@@ -14,11 +14,7 @@ SerialPort.list().then (
 const port = new SerialPort(protocolConfiguration);
 const parser = port.pipe(new ReadlineParser());
 
-function getArduino(){
-   parser.on('data', (data) => {    
-      console.log(data);
-      return data;
-   });
-}
-
-export {getArduino};
+parser.on('data', (data) => {    
+   console.log(data);
+   return data;
+});
