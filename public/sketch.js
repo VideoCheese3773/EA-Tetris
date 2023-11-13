@@ -96,35 +96,35 @@ socket.on('input', (input) => {
   //console.log(input);
   switch (parseInt(input.key)) {
     case 87: //W
-      console.log("W");
+      //console.log("W");
       keyPressUp = true;
       applyInputArduino(200);
       keyPressUp = false;
       break;
 
     case 65: //A
-      console.log("A");
+      //console.log("A");
       keyPressLeft = true;
       applyInputArduino(200);
       keyPressLeft = false;
       break;
 
     case 83: //S
-      console.log("S");
+      //console.log("S");
       keyPressDown = true;
       applyInputArduino(200);
       keyPressDown = false;
       break;
 
     case 68: //D
-      console.log("D");
+      //console.log("D");
       keyPressRight = true;
       applyInputArduino(200);
       keyPressRight = false;
       break;
 
     case 70: //F
-      console.log("F");
+      //console.log("F");
       this.tetris.pause = !this.tetris.pause;//F
       if (musicPlay == true) {
         holdOnTight.pause();
@@ -136,12 +136,12 @@ socket.on('input', (input) => {
       break;
 
     case 82: //R
-      console.log("R");
+      //console.log("R");
       this.tetris.restart = true;
       break;
 
     case 81: //Q
-      console.log("Q");
+      //console.log("Q");
       console.log("imagine you held that tetrimino :D");
       break;
 
