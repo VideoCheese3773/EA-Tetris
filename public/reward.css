@@ -1,0 +1,89 @@
+@font-face {
+    font-family: "kanitB";
+    src: url("./assets/fonts/kanit/Kanit-Black.ttf");
+  }
+
+@font-face {
+    font-family: "kanit";
+    src: url("./assets/fonts/kanit/Kanit-Regular.ttf");
+  }
+
+
+
+body {
+    max-width: 100%;
+    max-height: 100%;
+    margin:0px;
+    background-color: rgb(0,0,50);
+    
+  }
+  
+  #screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+  }
+  
+  #text {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding-bottom: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  h1 {
+    font-size: 130px;
+    text-align: center;
+    -webkit-text-stroke: 8px violet;
+    color: rgba(255, 255, 255, 0);
+    font-family: kanitB;
+    padding: 40px;
+    margin:0;
+  }
+  
+  p {
+    font-size: 45px;
+    text-align: center;
+    color: white;
+    padding: 40px;
+    margin:0;
+    font-family: kanit;
+  }
+
+  .inputext{
+    width: 80%;
+    height: auto;
+    font-size: 40px;
+    font-family: kanit;
+    text-align: center;
+    border: 8px solid violet;
+    border-radius: 20px;    
+    margin: 10px
+  }
+
+  .sendButton{
+    width: 25%;
+    height: auto;
+    font-size: 45px;
+    font-family: kanit;
+    text-align: center;
+    background-color: rgb(255,201,66);
+    border: 0px;
+    border-radius: 20px;
+    margin: 40px
+  }
+
+  #blocks{
+    width: 100%;
+  }
