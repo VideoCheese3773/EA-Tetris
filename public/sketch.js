@@ -6,6 +6,8 @@ TODO:
 - poner sonido de portal blue al cambio de hold
 */
 
+const socket = io()
+
 let keyPressUp = false;
 let keyPressDown = false;
 let keyPressLeft = false;
@@ -89,6 +91,10 @@ function setup() { //setup de canvas y demas
     palletteMono[i][2] = 255 * gray;
   }
 }
+
+socket.on('input', (key) => {
+  console.log(key);
+})
 
 function draw() { //dibuja y actualiza el tetris cada tick
   if (this.timer.updateStep()) {
