@@ -15,32 +15,32 @@ let keyPressRight = false;
 let musicPlay = true;
 
 var shapeList = [
-  [ 0, 0, 1, 0,
+  [0, 0, 1, 0,
     0, 0, 1, 0,
     0, 0, 1, 0,
     0, 0, 1, 0], // I
 
-  [ 0, 2, 0,
+  [0, 2, 0,
     0, 2, 0,
     0, 2, 2], // L
 
-  [ 0, 3, 0,
+  [0, 3, 0,
     0, 3, 0,
     3, 3, 0], // J
 
-  [ 4, 4, 0,
+  [4, 4, 0,
     0, 4, 4,
     0, 0, 0], // Z
 
-  [ 0, 5, 5,
+  [0, 5, 5,
     5, 5, 0,
     0, 0, 0], // S
 
-  [ 0, 0, 0,
+  [0, 0, 0,
     6, 6, 6,
     0, 6, 0], // T
 
-  [ 7, 7,
+  [7, 7,
     7, 7], // O
 ];// tetriminos shapes
 
@@ -92,8 +92,63 @@ function setup() { //setup de canvas y demas
   }
 }
 
-socket.on('input', (key) => {
-  console.log(key);
+socket.on('input', (input) => {
+  //console.log(input);
+  switch (parseInt(input.key)) {
+    case 87: //W
+      console.log("W");
+      keyPressUp = true;
+      applyInputArduino(200);
+      keyPressUp = false;
+      break;
+
+    case 65: //A
+      console.log("A");
+      keyPressLeft = true;
+      applyInputArduino(200);
+      keyPressLeft = false;
+      break;
+
+    case 83: //S
+      console.log("S");
+      keyPressDown = true;
+      applyInputArduino(200);
+      keyPressDown = false;
+      break;
+
+    case 68: //D
+      console.log("D");
+      keyPressRight = true;
+      applyInputArduino(200);
+      keyPressRight = false;
+      break;
+
+    case 70: //F
+      console.log("F");
+      this.tetris.pause = !this.tetris.pause;//F
+      if (musicPlay == true) {
+        holdOnTight.pause();
+        musicPlay = false;
+      } else {
+        holdOnTight.loop()
+        musicPlay = true;
+      }
+      break;
+
+    case 82: //R
+      console.log("R");
+      this.tetris.restart = true;
+      break;
+
+    case 81: //Q
+      console.log("Q");
+      console.log("imagine you held that tetrimino :D");
+      break;
+
+    default:
+      console.log("WTF was that input???");
+      break;
+  }
 })
 
 function draw() { //dibuja y actualiza el tetris cada tick
@@ -106,6 +161,15 @@ function draw() { //dibuja y actualiza el tetris cada tick
 }
 
 function applyInput(newDelay) { // recibe las entreadas del usuario para mover los tetriminos
+  if (this.tetris.pause) return;
+  if (keyPressUp) this.tetris.rotate = true;
+  if (keyPressDown) this.tetris.ty = +1;
+  if (keyPressLeft) this.tetris.tx = -1;
+  if (keyPressRight) this.tetris.tx = +1;
+  this.timer.reset(newDelay);
+}
+
+function applyInputArduino(newDelay) { // recibe las entreadas del usuario para mover los tetriminos
   if (this.tetris.pause) return;
   if (keyPressUp) this.tetris.rotate = true;
   if (keyPressDown) this.tetris.ty = +1;
@@ -140,7 +204,7 @@ function keyReleased() { // lo mismo pero cuando los sueltan
   keyPressRight ^= keyCode === 68;
 }
 
-function arduinoKeyPressed(getArduino){
+function arduinoKeyPressed(getArduino) {
   keyPressUp |= getArduino === 87; //W
   applyInput(200);
 }
@@ -411,7 +475,7 @@ class Tetris {
       }
     }
   }
-//TODO:How do i save and display a holded tetrimino
+  //TODO:How do i save and display a holded tetrimino
   displayNextShape(pg, x, y, w, h) {
     var shape = this.shapeNext;
     var shapeSize = parseInt(sqrt(shape.length));
