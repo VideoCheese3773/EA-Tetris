@@ -12,7 +12,9 @@ let keyPressUp = false;
 let keyPressDown = false;
 let keyPressLeft = false;
 let keyPressRight = false;
-let musicPlay = true;
+let musicPlay;
+let intro = true;
+let gameStarted = false;
 
 var shapeList = [
   [0, 0, 1, 0,
@@ -58,26 +60,49 @@ var pallette = [
 ]; // color pallette
 
 // Fonts
-let kanitReg, kanigSB, tetrisImg, kalinka, holdOnTight, bite;
+let kanitReg, kanigSB, retro, tetrisImg, qr, kalinka, holdOnTight, bite, mupi1, mupi2;
 
 function preload() {
   //Fonts
   kanitReg = loadFont('/assets/fonts/kanit/Kanit-Regular.ttf');
   kanitSB = loadFont('/assets/fonts/kanit/Kanit-SemiBold.ttf');
+  retro = loadFont('/assets/fonts/retro/Retro Gaming.ttf')
   //Img
   tetrisImg = loadImage('/assets/imgs/tetris.png');
+  qr = loadImage('/assets/imgs/qr.jpeg');
   //Music
   kalinka = loadSound('/assets/audio/Kalinka.mp3');
   holdOnTight = loadSound('/assets/audio/Hold On Tight.mp3');
   //SFX
   bite = loadSound('/assets/audio/Bite.mp3');
   bite.setVolume(0.2)
+
+  /*mupi1.size(1080, 1920)
+  mupi2 = createVideo('/assets/video/Mupi2.mp4');*/
 }
 
 // Game
 function setup() { //setup de canvas y demas
+  musicPlay = true
+  HOTPlaying()
   volSlider = createSlider(0, 1, 0.15, 0.05);//Slider para el volumen
   createCanvas(1080, 1920);
+  setupStart()
+  setupTetris()
+}
+
+function setupStart() {
+  mupi1 = createVideo('/assets/video/Mupi1.mp4');
+  mupi1.hide();
+  mupi1.play();
+  mupi1.onended(loadingScreen)
+
+  mupi2 = createVideo('/assets/video/Mupi2.mp4');
+  mupi2.hide();
+  mupi2.loop();
+}
+
+function setupTetris() {
   this.tetris = new Tetris(10, 20);
   this.timer = new Timer();
   frameRate(60);
@@ -89,6 +114,16 @@ function setup() { //setup de canvas y demas
     palletteMono[i][0] = 255 * gray;
     palletteMono[i][1] = 255 * gray;
     palletteMono[i][2] = 255 * gray;
+  }
+}
+
+function HOTPlaying() {
+  if (musicPlay == true) {
+    holdOnTight.pause();
+    musicPlay = false;
+  } else {
+    holdOnTight.loop()
+    musicPlay = true;
   }
 }
 
@@ -126,13 +161,7 @@ socket.on('input', (input) => {
     case 70: //F
       //console.log("F");
       this.tetris.pause = !this.tetris.pause;//F
-      if (musicPlay == true) {
-        holdOnTight.pause();
-        musicPlay = false;
-      } else {
-        holdOnTight.loop()
-        musicPlay = true;
-      }
+      HOTPlaying()
       break;
 
     case 82: //R
@@ -142,7 +171,9 @@ socket.on('input', (input) => {
 
     case 81: //Q
       //console.log("Q");
-      console.log("imagine you held that tetrimino :D");
+      console.log("Game Start");
+      startGame()
+      gameStarted = true;
       break;
 
     default:
@@ -152,12 +183,42 @@ socket.on('input', (input) => {
 })
 
 function draw() { //dibuja y actualiza el tetris cada tick
-  if (this.timer.updateStep()) {
-    applyInput(25);
+  if (!gameStarted) {
+    kalinka.setVolume(volSlider.value())
+    background(0); // Set background color
+    if (intro) {
+      holdOnTight.stop()
+      image(mupi1, 0, 0, 1080, 1920);
+    } else {
+      image(mupi2, 0, 0, 1080, 1920);
+      let txt = "PRESS START"
+      textSize(64)
+      textFont(retro)
+      text(txt, (width / 2) - 95, height / 2 - 30)
+    }
+  } else {
+    if (this.timer.updateStep()) {
+      applyInput(25);
+    }
+    this.tetris.update();
+    this.tetris.display(this);
+    holdOnTight.setVolume(volSlider.value());
   }
-  this.tetris.update();
-  this.tetris.display(this);
-  holdOnTight.setVolume(volSlider.value());
+}
+
+function loadingScreen() {
+  intro = false
+  musicPlay = true;
+  HOTPlaying()
+  kalinka.loop()
+}
+
+function startGame() {
+  if (!gameStarted) {
+    musicPlay = false;
+    HOTPlaying()
+    kalinka.stop()
+  }
 }
 
 function applyInput(newDelay) { // recibe las entreadas del usuario para mover los tetriminos
@@ -181,13 +242,7 @@ function applyInputArduino(newDelay) { // recibe las entreadas del usuario para 
 function keyPressed() { // funcion para config de controles y listeners
   if (keyCode == 70) {
     this.tetris.pause = !this.tetris.pause;//F
-    if (musicPlay == true) {
-      holdOnTight.pause();
-      musicPlay = false;
-    } else {
-      holdOnTight.loop()
-      musicPlay = true;
-    }
+    HOTPlaying()
   }
   if (keyCode == 82) this.tetris.restart = true;//R
   keyPressUp |= keyCode === 87;//W
@@ -217,8 +272,6 @@ class Tetris {
     this.shapeNext = undefined;
     this.shapeHold = undefined;
     this.pickNextShape();
-    //holdOnTight.play();
-    //holdOnTight.loop();
   }
   restartGame() { // default values para el tetris
     this.tGrid.clearGrid();
@@ -230,7 +283,7 @@ class Tetris {
     this.tx = 0;
     this.ty = 0;
     this.level = 1;
-    this.rowsPerLevel = 5;
+    this.rowsPerLevel = 5; // 5 default
     this.rowsCompleted = 0;
     this.shapesCount = 0;
     this.timer.reset(600);
@@ -329,7 +382,7 @@ class Tetris {
       canvas.textSize(110);
       canvas.fill(240, 240, 240); //done
       canvas.text(txtTitle, tx, ty - 70);
-      var txtDesc = "Get to level 6 for a discount!"
+      var txtDesc = "Get to level 5 for a discount!"
       canvas.textAlign(CENTER, CENTER);
       canvas.noStroke();
       canvas.textFont(kanitReg);
@@ -363,7 +416,7 @@ class Tetris {
     }
 
     // Game status
-    var lvlWin = 1; // ESTO CAMBIA EL NUMERO DE NIVELES PARA GANAR EL DESCUENTO
+    var lvlWin = 5; // ESTO CAMBIA EL NUMERO DE NIVELES PARA GANAR EL DESCUENTO
     var txtGameStatus = undefined;
     if (this.gameOver) {
       if (this.level > lvlWin) {
@@ -388,9 +441,23 @@ class Tetris {
         canvas.fill(255, 0, 0); //Red
       }
       canvas.text(txtGameStatus, canvasW / 2, canvasH / 2);
+      if (this.level > lvlWin) {
+        canvas.fill(0, 0, 0)
+        canvas.rect(canvasW / 2 - 350, canvasH / 2 + 90, 700, 40)
+        
+        canvas.textSize(40);
+        canvas.textFont(kanitReg);
+        canvas.textAlign(CENTER, CENTER);
+        canvas.noStroke();
+        canvas.fill(240, 240, 240); //done
+        canvas.text("Scan this QR code for your disscount!", canvasW / 2, canvasH / 2 + 100);
+
+        image(qr, canvasW / 2 - 200, canvasH / 2 + 150, 400, 400);
+      }
+
     }
 
-    // Controlls
+    // Controls
     {
       var ty = 8 * canvasW / 6;
       var tx1 = (6 * canvasW / 8) - 40;
