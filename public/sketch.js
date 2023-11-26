@@ -416,10 +416,10 @@ class Tetris {
     }
 
     // Game status
-    var lvlWin = 5; // ESTO CAMBIA EL NUMERO DE NIVELES PARA GANAR EL DESCUENTO
+    var lvlWin = 1; // ESTO CAMBIA EL NUMERO DE NIVELES PARA GANAR EL DESCUENTO
     var txtGameStatus = undefined;
     if (this.gameOver) {
-      if (this.level > lvlWin) {
+      if (this.level >= lvlWin) {
         txtGameStatus = "YOU WIN"
       } else {
         txtGameStatus = "GAME OVER";
@@ -435,13 +435,13 @@ class Tetris {
       canvas.text(txtGameStatus, canvasW / 2 + 4, canvasH / 2 + 4);
       if (this.pause) {
         canvas.fill(255, 255, 0); //Yellow
-      } else if (this.level > lvlWin) {
+      } else if (this.level >= lvlWin) {
         canvas.fill(0, 255, 0); //Green
       } else {
         canvas.fill(255, 0, 0); //Red
       }
       canvas.text(txtGameStatus, canvasW / 2, canvasH / 2);
-      if (this.level > lvlWin) {
+      if (this.level >= lvlWin) {
         canvas.fill(0, 0, 0)
         canvas.rect(canvasW / 2 - 350, canvasH / 2 + 90, 700, 40)
         
