@@ -382,7 +382,7 @@ class Tetris {
       canvas.textSize(110);
       canvas.fill(240, 240, 240); //done
       canvas.text(txtTitle, tx, ty - 70);
-      var txtDesc = "Get to level 5 for a discount!"
+      var txtDesc = "Get to level 3 for a discount!"
       canvas.textAlign(CENTER, CENTER);
       canvas.noStroke();
       canvas.textFont(kanitReg);
@@ -416,7 +416,7 @@ class Tetris {
     }
 
     // Game status
-    var lvlWin = 1; // ESTO CAMBIA EL NUMERO DE NIVELES PARA GANAR EL DESCUENTO
+    var lvlWin = 3; // ESTO CAMBIA EL NUMERO DE NIVELES PARA GANAR EL DESCUENTO
     var txtGameStatus = undefined;
     if (this.gameOver) {
       if (this.level >= lvlWin) {
