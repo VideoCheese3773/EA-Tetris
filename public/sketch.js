@@ -15,7 +15,7 @@ let keyPressRight = false;
 let musicPlay;
 let intro = true;
 let gameStarted = false;
-
+//Shapelist de formas  que tiende de entrada una matriz
 var shapeList = [
   [0, 0, 1, 0,
     0, 0, 1, 0,

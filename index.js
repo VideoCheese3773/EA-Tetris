@@ -19,7 +19,7 @@ const protocolConfiguration = {
 const port = new SerialPort(protocolConfiguration);
 const parser = port.pipe(new ReadlineParser());
 
-//Server /////////////////////////////////////////////////////////////
+//Server //////////////////////
 
 app.get('/', (req, res) => {
    res.send('<h1>Hello World</h1>')
