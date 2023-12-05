@@ -444,7 +444,7 @@ class Tetris {
       if (this.level >= lvlWin) {
         canvas.fill(0, 0, 0)
         canvas.rect(canvasW / 2 - 350, canvasH / 2 + 90, 700, 40)
-        
+
         canvas.textSize(40);
         canvas.textFont(kanitReg);
         canvas.textAlign(CENTER, CENTER);
